@@ -1,6 +1,6 @@
 # Lab 5 - Starter
 Members: Kainoa Woessner
-expose.html: https://kaiwoessner.github.io/Lab5_Starter/expose.html
+expose.html: https://kaiwoessner.github.io/Lab5_Starter/expose.html  
 explore.html: https://kaiwoessner.github.io/Lab5_Starter/explore.html
 
 1. No, you would not use a unit test to test the "message" feature of a message application. This is because it would require the code to interact with another device which is not possible in the realm of unit tests due to the many moving parts.
