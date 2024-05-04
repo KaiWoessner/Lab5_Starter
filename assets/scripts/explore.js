@@ -4,57 +4,42 @@ window.addEventListener('DOMContentLoaded', init);
 
 const synth = window.speechSynthesis;
 
+var voices = [];
 function init() {
-
-  // Call populateVoiceList function
-  populateVoiceList();
-
-  speechSynthesis.onvoiceschanged = populateVoiceList;
-
+  var sel = document.querySelector("select");
+  var input = document.getElementById("text-to-speak");
+  const speach = new SpeechSynthesisUtterance(input.value);
   var btn = document.querySelector("button");
   btn.addEventListener("click", readText);
 
-}
+  function populateVoiceList() {
+    voices = synth.getVoices();
 
-// Add voices to select list
-function populateVoiceList() {
-  var sel = document.getElementById("voice-select");
-  let voices = synth.getVoices();
+    for (let i = 0; i < voices.length; i++) {
+      const option = document.createElement("option");
+      option.textContent = `${voices[i].name} (${voices[i].lang})`;
 
-  for (let i = 0; i < voices.length; i++) {
-    const option = document.createElement("option");
-    option.textContent = `${voices[i].name} (${voices[i].lang})`;
-
-    option.setAttribute("data-lang", voices[i].lang);
-    option.setAttribute("data-name", voices[i].name);
-    sel.appendChild(option);
-  }
-}
-
-// Read inputted text aloud
-function readText(){
-  let voices = synth.getVoices();
-  var input = document.getElementById("text-to-speak");
-  const speach = new SpeechSynthesisUtterance(input.value);
-
-  var sel = document.getElementById("voice-select");
-  const selectedOption = sel.selectedOptions[0].getAttribute("data-name");
-  for (let i = 0; i < voices.length; i++) {
-    if (voices[i].name === selectedOption) {
-      speach.voice = voices[i];
+      option.setAttribute("data-lang", voices[i].lang);
+      option.setAttribute("data-name", voices[i].name);
+      sel.appendChild(option);
     }
   }
 
-  var speak_img = document.querySelector("img");
+  populateVoiceList();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = populateVoiceList;
+  }
 
-  speach.addEventListener('start', function() {
-    speak_img.src = "assets/images/smiling-open.png";
-  });
+  function readText() {
+    const speach = new SpeechSynthesisUtterance(input.value);
+    const selectedOption = sel.selectedOptions[0].getAttribute("data-name");
+    for (let i = 0; i < voices.length; i++) {
+      if (voices[i].name === selectedOption) {
+        speach.voice = voices[i];
+      }
+    }
+    synth.speak(speach);
 
-  speach.addEventListener('end', function() {
-    speak_img.src = "assets/images/smiling.png";
-
-  });
-
-  synth.speak(speach);
+    input.blur();
+  };
 }
